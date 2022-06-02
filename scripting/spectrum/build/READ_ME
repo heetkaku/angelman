@@ -1,0 +1,41 @@
+To compute the PSD results follow these steps:
+
+1. Add the 'scripting' directory to Python's path in order to run the code successfully.
+ 
+2. To obtain the dataset containing PSDs run build.py (scripting/spectrum/build/build.py)
+   All input arguments have been set to what was used in the manuscript. 
+   Make sure the SAVE_PATH & META_PATH are correct. 
+   The CSV file pointed by META_PATH needs to be correct depending on which time point is desired.
+   For example: If the EDFs and annotations are slected for 3 weeks post 3 weeks animals, the META_PATH 
+   should point towards .../group_info_3week_post3week.csv
+   
+3. After running build.py, you should have a dictionary named dset in your workspace.
+   This is what dset should look like:
+   
+   KEY                		  VALUE
+   annotations (list):        list of annotations included. default: ['ignore']
+   axes (list):		          axes labels for 'data' ndarray. default: ['annotations', 'channels', 'frequencies', 'names']
+   channels (numpy.array):    channel numbers included in 'data'
+   data (ndarray): 	          n-dimensional PSD array with the dimensions in the order of 'axes'
+   frequencies (numpy.array): corresponding frequencies of PSDs
+   metadata (dict):           filenames as key and metadata from csv as values
+   names (list):              filenames in the order as they are in 'data' along the names dimension (see 'axes')
+   parameters (dict):         dictionary of important input parameters used to run the code
+   
+4. To obtain  psds, normalized psds, band powers, relative band powers and band ratios. Run the get_metrics.py script.
+   (scripting/spectrum/build/get_metrics.py)
+   Make sure 'DPATH' is pointing to the desired dataset. Select 'GROUP' as desired. Options include 'a','b','c' or
+   'd'. a=AS ASO, b=WT, c=MUT, d=SNORD 115 ASO. Also, channels are in the following order: FC, VC, SC, EMG.
+   After running this script successfully, workspace should have 5 more variables:
+   
+   i. abs_psd:         n-dimensional array containing power spectrum densities with dimensions 
+                       following this order; channels x frequencies x animals
+  ii. normalized_psd:  n-dimensional array containing normalized power spectrum densities with dimensions 
+                       following this order; channels x frequencies x animals (normalized to power in 1-100Hz)
+ iii. absolute_powers: n-dimensional array containing absolute band powers with dimensions following this order; 
+                       channels x bands x animals
+  iv. relative_powers: n-dimensional array containing relative band powers with dimensions following this order; 
+                       channels x bands x animals. Powers are normalized using cutoffs provided to band_powers().
+                       See scripting.metrics for details. Cutoffs default to 1-100Hz
+   v. band_ratios:     n-dimensional array containing low:high (8-25Hz:50-100Hz) band ratios with dimensions 
+                       following this order; channels x 1 x animals
